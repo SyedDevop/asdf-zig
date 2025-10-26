@@ -72,9 +72,13 @@ def format_size(size_in_bytes):
 
 def query_zls(zig_version):
     url = f'https://releases.zigtools.org/v1/zls/select-version?zig_version={zig_version}&compatibility=full'
-    with http_get(url) as response:
-        body = response.read().decode('utf-8')
-        return json.loads(body)
+    try:
+        with http_get(url) as response:
+            body = response.read().decode('utf-8')
+            return json.loads(body)
+    except HTTPError as e:
+        print(f'Failed to fetch zls version list: {e}')
+        return json.loads('{}')
 
 
 def all_versions():
