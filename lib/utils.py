@@ -76,8 +76,8 @@ def query_zls(zig_version):
         with http_get(url) as response:
             body = response.read().decode('utf-8')
             return json.loads(body)
-    except HTTPError as e:
-        print(f'Failed to fetch zls version list: {e}')
+    except HTTPAccessError as e:
+        print(f'[Warning]: Failed to fetch zls version list: {e}')
         return json.loads('{}')
 
 
@@ -89,7 +89,9 @@ def all_versions():
 
 
 def download_and_check(url, out_file, expected_shasum, total_size):
-    logging.info(f'Begin download tarball({format_size(total_size)}) from {url} to {out_file}...')
+    logging.info(
+        f'Begin download tarball({format_size(total_size)}) from {url} to {out_file}...'
+    )
     chunk_size = 1024 * 1024 * 2  # 2M chunks
     sha256_hash = hashlib.sha256()
     with http_get(url) as response:
